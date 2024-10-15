@@ -11,7 +11,7 @@ function addLayers(data) {
         var coordinates = e.features[0].geometry.coordinates.slice();
         var description = `
         <h4><b>${e.features[0].properties.address}</b></h4>
-        <h4><a href=${e.features[0].properties['link to media']}>'media post'</a></h4>
+        <h4><a href=${e.features[0].properties['link to media']}>media post</a></h4>
       `;
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
