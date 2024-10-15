@@ -3,17 +3,15 @@ const layerId = 'activist data Layer';
 const activistDataSource = 'activist data source';
 
 function addLayers(data) {
-    
-    addClusters();
-    
+
+    renderClusters();
+    renderPoints();
+
     map.on('click', layerId, function (e) {
         var coordinates = e.features[0].geometry.coordinates.slice();
         var description = `
-        <h3>${e.features[0].properties.Title}</h3>
-        <h4><em>${e.features[0].properties.Date}</em></h4>
-        <h4><b>${e.features[0].properties.Address}</b></h4>
-        <h4>${e.features[0].properties.Description}</h4>
-        <h4><a href='${e.features[0].properties.Link}'>${e.features[0].properties.Hyperlink}</a></h4>
+        <h4><b>${e.features[0].properties.address}</b></h4>
+        <h4><a href=${e.features[0].properties['link to media']}>'media post'</a></h4>
       `;
         while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
@@ -36,7 +34,7 @@ function addLayers(data) {
     map.fitBounds(bbox, { padding: 50 });
 };
 
-function addClusters() {
+function renderClusters() {
     // Add clustered layer
     map.addLayer({
         id: 'clusters',
@@ -82,15 +80,30 @@ function addClusters() {
     });
 };
 
+function renderPoints() {
+    map.addLayer({
+        id: layerId,
+        type: 'symbol',
+        source: activistDataSource,
+        filter: ['!', ['has', 'point_count']],
+        layout: {
+        'icon-image': 'reports',
+        'icon-size': 1.2,
+        'icon-allow-overlap': true,
+        'icon-ignore-placement': true
+        }
+    });
+}
+
 function makeGeoJSON(csvData) {
     csv2geojson.csv2geojson(csvData, {
         latfield: 'Latitude',
         lonfield: 'Longitude',
         delimiter: ','
     }, function (err, geojson) {
-        
+
         olivesOriginalData = geojson; // Store original data
-        
+
         // Add GeoJSON source with clustering
         map.addSource(activistDataSource, {
             type: 'geojson',
@@ -103,8 +116,6 @@ function makeGeoJSON(csvData) {
         map.on('load', function () {
             addLayers(geojson);
         });
-
-
     });
 };
 
