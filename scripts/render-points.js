@@ -1,5 +1,5 @@
 
-const layerId = 'activist data Layer';
+const layerId = 'activist data points';
 const activistDataSource = 'activist data source';
 
 function addLayers(data) {
